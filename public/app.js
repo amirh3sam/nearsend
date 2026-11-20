@@ -1192,30 +1192,37 @@ async function init() {
       $('.panel-foot span:first-child').textContent = 'Direct peer-to-peer · Zero cloud storage';
       $('#download-all-zip').hidden = true;
       $('#download-zip').hidden = true;
-      await new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = '/p2p.js';
-        s.onload = resolve;
-        s.onerror = reject;
-        document.head.appendChild(s);
-      });
+      await Promise.all([
+        new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = '/qr.js';
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        }),
+        new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = '/p2p.js';
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        }),
+      ]);
       await window.NearsendP2P.init({
         deviceId: id,
         deviceName,
         getEntries: () => state.entries,
-        onRoomReady: async (code, link) => {
+        onRoomReady: (code, link) => {
           $('#code').textContent = code;
           $('#address').value = link;
           try {
-            const r = await fetch(`/api/qr?link=${encodeURIComponent(link)}`);
-            if (r.ok) {
-              const blob = await r.blob();
-              if (qrBlobUrl) URL.revokeObjectURL(qrBlobUrl);
-              qrBlobUrl = URL.createObjectURL(blob);
-              $('#qr').src = qrBlobUrl;
-              $('#qr').hidden = false;
-              $('#qr-fallback').hidden = true;
-            }
+            const svg = window.NearsendQR.generateQrSvg(link);
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            if (qrBlobUrl) URL.revokeObjectURL(qrBlobUrl);
+            qrBlobUrl = URL.createObjectURL(blob);
+            $('#qr').src = qrBlobUrl;
+            $('#qr').hidden = false;
+            $('#qr-fallback').hidden = true;
           } catch {}
         },
         onPeers: (peerList) => {

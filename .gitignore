@@ -5,3 +5,5 @@ output/
 .npm-cache/
 .vercel/
 .taste-skill/
+
+.vercel

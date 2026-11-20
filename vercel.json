@@ -1,6 +1,11 @@
 {
   "version": 2,
+  "framework": null,
+  "buildCommand": "",
   "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/api/setup", "destination": "/p2p-setup.json" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
