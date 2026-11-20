@@ -1,0 +1,8 @@
+{
+  "name": "nearsend",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Private Wi-Fi file and clipboard transfer between iPhone and Windows",
+  "scripts": { "start": "node server.js", "test": "node --test tests/server.test.js" },
+  "engines": { "node": ">=22" }
+}
